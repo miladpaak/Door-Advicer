@@ -197,9 +197,10 @@ function mattress_advisor_process_form() {
             } else {
                 $lhs = isset($form_data[$key]) ? mattress_advisor_normalize_value($key, $form_data[$key]) : null;
                 $rhs = mattress_advisor_normalize_value($key, $value);
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
+                    $lhs_values = is_array($lhs) ? $lhs : array_filter(array_map('trim', explode(',', (string)$lhs)));
                     $rhs_values = array_filter(array_map('trim', explode(',', (string)$rhs)));
-                    if ($lhs === null || empty($rhs_values) || !in_array((string)$lhs, $rhs_values, true)) {
+                    if (empty($lhs_values) || empty($rhs_values) || empty(array_intersect($lhs_values, $rhs_values))) {
                         $matched = false;
                         break;
                     }
@@ -257,9 +258,10 @@ function mattress_advisor_process_form() {
                 }
             } else {
                 $rule_val_norm = mattress_advisor_normalize_value($key, $conditions[$key]);
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
+                    $form_values = is_array($form_val_norm) ? $form_val_norm : array_filter(array_map('trim', explode(',', (string)$form_val_norm)));
                     $rule_values = array_filter(array_map('trim', explode(',', (string)$rule_val_norm)));
-                    if (in_array((string)$form_val_norm, $rule_values, true)) {
+                    if (!empty(array_intersect($form_values, $rule_values))) {
                         $score += 10;
                     }
                 } elseif ((string)$form_val_norm === (string)$rule_val_norm) {
@@ -657,6 +659,19 @@ function mattress_advisor_normalize_value( $key, $value ) {
                 '100%ضدآب' => 'waterproof',
             ];
             return $map[$val] ?? strtolower($val);
+        case 'interior_material':
+            $map = [
+                'mdf_melamine' => 'mdf',
+                'MDF و ملامینه' => 'mdf',
+                'mdf' => 'mdf',
+                'melamine' => 'melamine',
+                'ملامینه' => 'melamine',
+                'abs' => 'abs',
+                'polywood' => 'polywood',
+                'پلی وود' => 'polywood',
+                'پلی‌وود' => 'polywood',
+            ];
+            return $map[$val] ?? strtolower($val);
         default:
             return strtolower($val);
     }
@@ -894,7 +909,7 @@ function mattress_advisor_check_conflicts() {
                     }
                 }
             } else { // Handle exact match conflicts
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
                     $new_values = array_filter(array_map('trim', explode(',', (string)$new_val)));
                     $existing_values = array_filter(array_map('trim', explode(',', (string)$existing_conditions[$key])));
                     if (empty(array_intersect($new_values, $existing_values))) {
@@ -950,7 +965,14 @@ function mattress_advisor_is_form_complete($form_data) {
     if ($form_data['door_type'] === 'interior') {
         $required = ['waterproof','metal_frame_installed','usage_space','interior_style','color_theme','weatherstrip','interior_material'];
         foreach ($required as $field) {
-            if (!isset($form_data[$field]) || trim((string)$form_data[$field]) === '') {
+            if (!isset($form_data[$field])) {
+                return false;
+            }
+            if (is_array($form_data[$field])) {
+                if (empty(array_filter(array_map('trim', $form_data[$field])))) {
+                    return false;
+                }
+            } elseif (trim((string)$form_data[$field]) === '') {
                 return false;
             }
         }
