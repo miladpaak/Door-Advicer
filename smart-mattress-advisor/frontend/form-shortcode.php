@@ -129,7 +129,8 @@ function mattress_advisor_form_shortcode() {
                     <div class="form-group">
                         <label>ضدآب <span class="required">*</span></label>
                         <div class="form-options" role="radiogroup">
-                            <label class="option"><input type="radio" name="waterproof" value="yes" data-conditional-required="interior"> <span class="option-label">بله</span></label>
+                            <label class="option"><input type="radio" name="waterproof" value="water_resistant" data-conditional-required="interior"> <span class="option-label">مقاوم به آب</span></label>
+                            <label class="option"><input type="radio" name="waterproof" value="waterproof" data-conditional-required="interior"> <span class="option-label">100%ضدآب</span></label>
                             <label class="option"><input type="radio" name="waterproof" value="no" data-conditional-required="interior"> <span class="option-label">خیر</span></label>
                         </div>
                     </div>
@@ -141,34 +142,31 @@ function mattress_advisor_form_shortcode() {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="usage_space">فضای مورد استفاده <span class="required">*</span></label>
-                        <select id="usage_space" name="usage_space" data-conditional-required="interior">
-                            <option value="">انتخاب کنید</option>
-                            <option value="room">اتاق</option>
-                            <option value="wc">سرویس بهداشتی</option>
-                            <option value="bathroom">حمام</option>
-                            <option value="pool">استخر</option>
-                            <option value="management">اتاق مدیریت</option>
-                            <option value="conference">کنفرانس</option>
-                        </select>
+                        <label>فضای مورد استفاده <span class="required">*</span></label>
+                        <div class="form-options" role="group">
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="room" data-conditional-required="interior"> <span class="option-label">اتاق</span></label>
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="wc" data-conditional-required="interior"> <span class="option-label">سرویس بهداشتی</span></label>
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="bathroom" data-conditional-required="interior"> <span class="option-label">حمام</span></label>
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="pool" data-conditional-required="interior"> <span class="option-label">استخر</span></label>
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="management" data-conditional-required="interior"> <span class="option-label">اتاق مدیریت</span></label>
+                            <label class="option"><input type="checkbox" name="usage_space[]" value="conference" data-conditional-required="interior"> <span class="option-label">کنفرانس</span></label>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="interior_style">سبک <span class="required">*</span></label>
-                        <select id="interior_style" name="interior_style" data-conditional-required="interior">
-                            <option value="">انتخاب کنید</option>
-                            <option value="modern">مدرن</option>
-                            <option value="neo_classic">نئو کلاسیک</option>
-                            <option value="classic">کلاسیک</option>
-                        </select>
+                        <label>سبک <span class="required">*</span></label>
+                        <div class="form-options" role="radiogroup">
+                            <label class="option"><input type="radio" name="interior_style" value="modern" data-conditional-required="interior"> <span class="option-label">مدرن</span></label>
+                            <label class="option"><input type="radio" name="interior_style" value="neo_classic" data-conditional-required="interior"> <span class="option-label">نئو کلاسیک</span></label>
+                            <label class="option"><input type="radio" name="interior_style" value="classic" data-conditional-required="interior"> <span class="option-label">کلاسیک</span></label>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="color_theme">تم رنگ <span class="required">*</span></label>
-                        <select id="color_theme" name="color_theme" data-conditional-required="interior">
-                            <option value="">انتخاب کنید</option>
-                            <option value="colored">رنگی</option>
-                            <option value="black_theme">تم سیاه</option>
-                            <option value="light_theme">تم روشن</option>
-                        </select>
+                        <label>تم رنگ <span class="required">*</span></label>
+                        <div class="form-options" role="radiogroup">
+                            <label class="option"><input type="radio" name="color_theme" value="colored" data-conditional-required="interior"> <span class="option-label">رنگی</span></label>
+                            <label class="option"><input type="radio" name="color_theme" value="black_theme" data-conditional-required="interior"> <span class="option-label">تم سیاه</span></label>
+                            <label class="option"><input type="radio" name="color_theme" value="light_theme" data-conditional-required="interior"> <span class="option-label">تم روشن</span></label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>نوار درزگیر <span class="required">*</span></label>
@@ -178,13 +176,13 @@ function mattress_advisor_form_shortcode() {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="interior_material">جنس درب <span class="required">*</span></label>
-                        <select id="interior_material" name="interior_material" data-conditional-required="interior">
-                            <option value="">انتخاب کنید</option>
-                            <option value="mdf_melamine">MDF و ملامینه</option>
-                            <option value="abs">ABS</option>
-                            <option value="polywood">پلی‌وود</option>
-                        </select>
+                        <label>جنس درب <span class="required">*</span></label>
+                        <div class="form-options" role="radiogroup">
+                            <label class="option"><input type="radio" name="interior_material" value="mdf" data-conditional-required="interior"> <span class="option-label">MDF</span></label>
+                            <label class="option"><input type="radio" name="interior_material" value="melamine" data-conditional-required="interior"> <span class="option-label">ملامینه</span></label>
+                            <label class="option"><input type="radio" name="interior_material" value="abs" data-conditional-required="interior"> <span class="option-label">ABS</span></label>
+                            <label class="option"><input type="radio" name="interior_material" value="polywood" data-conditional-required="interior"> <span class="option-label">پلی وود</span></label>
+                        </div>
                     </div>
                 </div>
                 <div class="door-type-hint" data-hint="entrance" style="display:none;">برای درب ورودی در مرحله قبل اطلاعات را تکمیل کرده‌اید.</div>

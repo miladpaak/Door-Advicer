@@ -24,6 +24,12 @@ jQuery(document).ready(function($) {
             if ($(this).is(':radio')) {
                 const radioName = $(this).attr('name');
                 $(`input[name="${radioName}"][data-conditional-required]`).prop('required', isRequired).prop('disabled', !isRequired);
+            } else if ($(this).is(':checkbox')) {
+                const checkboxName = $(this).attr('name');
+                $(`input[name="${checkboxName}"][data-conditional-required]`).prop('required', false).prop('disabled', !isRequired);
+                if (!isRequired) {
+                    $(`input[name="${checkboxName}"][data-conditional-required]`).prop('checked', false);
+                }
             } else {
                 $(this).prop('required', isRequired).prop('disabled', !isRequired);
                 if (!isRequired) {
@@ -76,7 +82,7 @@ jQuery(document).ready(function($) {
             const $field = $(this);
             const $group = $field.closest('.form-group');
 
-            if ($field.is(':radio')) {
+            if ($field.is(':radio') || $field.is(':checkbox')) {
                 const name = $field.attr('name');
                 if (!$(`input[name="${name}"]:enabled:checked`).length) {
                     ok = false;
@@ -140,8 +146,8 @@ jQuery(document).ready(function($) {
 
     function updateRadioTiles() {
         $('.form-options .option').each(function() {
-            const radio = $(this).find('input[type="radio"]');
-            $(this).toggleClass('selected', radio.is(':checked'));
+            const input = $(this).find('input[type="radio"], input[type="checkbox"]');
+            $(this).toggleClass('selected', input.is(':checked'));
         });
     }
 
@@ -174,7 +180,7 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('change', 'input[name="door_type"]', refreshDoorSections);
-    $(document).on('change', 'input[type="radio"]', function() {
+    $(document).on('change', 'input[type="radio"], input[type="checkbox"]', function() {
         updateRadioTiles();
         $(this).closest('.form-group').removeClass('error').addClass('success').find('.error-message').remove();
     });

@@ -142,9 +142,9 @@ jQuery(document).ready(function($) {
                 var keys = ['door_type','building_type','weather_exposure','facade_style','entrance_material','waterproof','metal_frame_installed','usage_space','interior_style','color_theme','weatherstrip','interior_material','door_width_min','door_width_max','door_height_min','door_height_max'];
                 keys.forEach(function(key){
                     var val = conditions[key] || '';
-                    if (key === 'entrance_material') {
+                    if (key === 'entrance_material' || key === 'usage_space') {
                         var values = Array.isArray(val) ? val : (String(val).split(',').map(function(v){ return v.trim(); }).filter(Boolean));
-                        $('#edit-rule-form').find('[name="entrance_material[]"]').val(values);
+                        $('#edit-rule-form').find('[name="'+key+'[]"]').val(values);
                     } else {
                         $('#edit-rule-form').find('[name="'+key+'"]').val(val);
                     }
