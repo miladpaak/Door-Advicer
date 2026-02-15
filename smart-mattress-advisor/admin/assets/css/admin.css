@@ -1,8 +1,15 @@
+
+.wrap.mattress-advisor-admin,
+.wrap.mattress-advisor-admin *,
+#wpbody-content .mattress-advisor-admin,
+#wpbody-content .mattress-advisor-admin * {
+    font-family: "iransansxv", sans-serif !important;
+}
 /* Modern Admin Panel Styles for Mattress Advisor */
 
 /* Main Container */
 .mattress-advisor-admin {
-   font-family : inherit;
+   font-family: "iransansxv", sans-serif;
     background: #f6f7f9;
     margin: 0; /* Removed negative margin to fix horizontal scroll */
     padding: 25px;
@@ -432,6 +439,30 @@ th a.sortable.sorted {
 
 .form-group input::placeholder {
     color: #9ca3af;
+}
+
+.form-group .field-help {
+    margin: -4px 0 10px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.door-conditions-subsection {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid #dbe3ee;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.door-conditions-subsection h4 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+.form-group select[multiple] {
+    min-height: 150px;
 }
 
 /* Form Actions - Fixed at bottom */
