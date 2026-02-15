@@ -1,8 +1,13 @@
+
+.mattress-wizard,
+.mattress-wizard * {
+  font-family: "iransansxv", sans-serif;
+}
 /* Mattress Advisor Multi-Step Form Styles */
 .mattress-wizard {
   margin: 0 auto;
   padding: 0;
-  font-family: inherit;
+  font-family: "iransansxv", sans-serif;
   direction: rtl;
   background: #f8f9fa;
   border-radius: 20px;
@@ -611,7 +616,7 @@ output::after {
   font-size: 16px;
   transition: all 0.3s ease;
   background: #fff;
-  font-family: inherit;
+  font-family: "iransansxv", sans-serif;
   color: #2c3e50;
   min-height: 0;
   box-sizing: border-box;
