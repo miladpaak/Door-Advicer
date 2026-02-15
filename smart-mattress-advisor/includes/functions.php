@@ -197,7 +197,7 @@ function mattress_advisor_process_form() {
             } else {
                 $lhs = isset($form_data[$key]) ? mattress_advisor_normalize_value($key, $form_data[$key]) : null;
                 $rhs = mattress_advisor_normalize_value($key, $value);
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
                     $rhs_values = array_filter(array_map('trim', explode(',', (string)$rhs)));
                     if ($lhs === null || empty($rhs_values) || !in_array((string)$lhs, $rhs_values, true)) {
                         $matched = false;
@@ -257,7 +257,7 @@ function mattress_advisor_process_form() {
                 }
             } else {
                 $rule_val_norm = mattress_advisor_normalize_value($key, $conditions[$key]);
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
                     $rule_values = array_filter(array_map('trim', explode(',', (string)$rule_val_norm)));
                     if (in_array((string)$form_val_norm, $rule_values, true)) {
                         $score += 10;
@@ -894,7 +894,7 @@ function mattress_advisor_check_conflicts() {
                     }
                 }
             } else { // Handle exact match conflicts
-                if ($key === 'entrance_material') {
+                if (in_array($key, ['entrance_material', 'usage_space'], true)) {
                     $new_values = array_filter(array_map('trim', explode(',', (string)$new_val)));
                     $existing_values = array_filter(array_map('trim', explode(',', (string)$existing_conditions[$key])));
                     if (empty(array_intersect($new_values, $existing_values))) {
