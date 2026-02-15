@@ -66,19 +66,16 @@ jQuery(document).ready(function($) {
                 // Populate edit form
                 $('#edit-rule-id').val(rule.id);
                 $('#edit_product_id').val(rule.product_id);
-                $('#edit_age').val(rule.age);
-                $('#edit_height').val(rule.height);
-                $('#edit_weight').val(rule.weight);
-                $('#edit_back_curve').val(rule.back_curve);
-                $('#edit_sleep_type').val(rule.sleep_type);
-                $('#edit_persons').val(rule.persons);
-                $('#edit_quality').val(rule.quality);
-                $('#edit_elasticity').val(rule.elasticity);
-                $('#edit_back_pain').val(rule.back_pain);
-                $('#edit_usage_type').val(rule.usage_type);
-                $('#edit_usage_place').val(rule.usage_place);
                 $('#edit_key_features').val(rule.key_features);
                 $('#edit_why_suitable').val(rule.why_suitable);
+
+                var conditions = {};
+                try { conditions = JSON.parse(rule.conditions || '{}'); } catch(e) { conditions = {}; }
+                var keys = ['door_type','building_type','weather_exposure','facade_style','entrance_material','waterproof','metal_frame_installed','usage_space','interior_style','color_theme','weatherstrip','interior_material','door_width_min','door_width_max','door_height_min','door_height_max'];
+                keys.forEach(function(key){
+                    var val = conditions[key] || '';
+                    $('#edit-rule-form').find('[name="'+key+'"]').val(val);
+                });
                 
                 // Show edit tab
                 $('.tab-button[data-tab="edit-rule"]').show().click();
@@ -231,29 +228,29 @@ jQuery(document).ready(function($) {
     // -------- Rules filters --------
     function applyFilters() {
         var text = $('#filter-text').val() ? $('#filter-text').val().toLowerCase() : '';
-        var persons = $('#filter-persons').val();
-        var sleep = $('#filter-sleep').val();
+        var doorType = $('#filter-door-type').val();
+        var buildingType = $('#filter-building-type').val();
         $('.rules-grid .rule-card').each(function(){
             var card = $(this);
             var hay = card.text().toLowerCase();
             var ok = true;
             if (text && hay.indexOf(text) === -1) ok = false;
-            if (persons) {
-                var tag = card.find('.condition-tag[data-key="persons"]').text();
-                if (tag.indexOf(persons) === -1) ok = false;
+            if (doorType) {
+                var dtag = card.find('.condition-tag[data-key="door_type"]').text().toLowerCase();
+                if (dtag.indexOf(doorType) === -1) ok = false;
             }
-            if (sleep) {
-                var stag = card.find('.condition-tag[data-key="sleep_type"]').text().toLowerCase();
-                if (stag.indexOf(sleep) === -1) ok = false;
+            if (buildingType) {
+                var btag = card.find('.condition-tag[data-key="building_type"]').text().toLowerCase();
+                if (btag.indexOf(buildingType) === -1) ok = false;
             }
             card.toggle(ok);
         });
     }
-    $(document).on('input change', '#filter-text, #filter-persons, #filter-sleep', applyFilters);
+    $(document).on('input change', '#filter-text, #filter-door-type, #filter-building-type', applyFilters);
     $(document).on('click', '#filter-clear', function(){
         $('#filter-text').val('');
-        $('#filter-persons').val('');
-        $('#filter-sleep').val('');
+        $('#filter-door-type').val('');
+        $('#filter-building-type').val('');
         applyFilters();
     });
 

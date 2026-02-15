@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: راهنمای مشاوره انتخاب تشک رویال مترز
+Plugin Name: مشاور فروش درب ورودی و داخلی
 Plugin URI: https://liamwp.com
-Description: افزونه مشاوره خرید تشک و پیشنهاد محصولات فروشگاه رویال مترز
+Description: افزونه مشاوره فروش درب ورودی و داخلی و پیشنهاد محصول مناسب بر اساس نیاز مشتری
 Version: 1.0.3
 Author: Yousef Rostami
 Author URI: https://liamwp.com
