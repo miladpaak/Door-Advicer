@@ -1,8 +1,15 @@
+
+.wrap.mattress-advisor-admin,
+.wrap.mattress-advisor-admin *,
+#wpbody-content .mattress-advisor-admin,
+#wpbody-content .mattress-advisor-admin * {
+    font-family: "iransansxv", sans-serif !important;
+}
 /* Modern Admin Panel Styles for Mattress Advisor */
 
 /* Main Container */
 .mattress-advisor-admin {
-   font-family : inherit;
+   font-family: "iransansxv", sans-serif;
     background: #f6f7f9;
     margin: 0; /* Removed negative margin to fix horizontal scroll */
     padding: 25px;

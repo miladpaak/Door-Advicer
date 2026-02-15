@@ -69,6 +69,19 @@ function mattress_advisor_rules_page() {
         $products = wc_get_products(['limit' => -1]);
     }
 
+    $product_categories = [];
+    if ( taxonomy_exists('product_cat') ) {
+        $product_categories = get_terms([
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => false,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ]);
+        if ( is_wp_error($product_categories) ) {
+            $product_categories = [];
+        }
+    }
+
     ?>
     <div class="wrap mattress-advisor-admin">
         <div class="admin-header">
@@ -206,11 +219,21 @@ function mattress_advisor_rules_page() {
                     <div class="form-section">
                         <h3><span class="dashicons dashicons-products"></span> انتخاب محصول</h3>
                         <div class="form-group">
+                            <label for="edit_product_category">دسته‌بندی محصول *</label>
+                            <select id="edit_product_category" class="mattress-product-category" data-target-product="#edit_product_id" required>
+                                <option value="">یک دسته‌بندی را انتخاب کنید</option>
+                                <?php foreach($product_categories as $category): ?>
+                                    <option value="<?php echo esc_attr($category->term_id); ?>"><?php echo esc_html($category->name); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="edit_product_id">محصول پیشنهادی *</label>
-                            <select name="product_id" id="edit_product_id" required>
-                                <option value="">یک محصول را انتخاب کنید</option>
+                            <select name="product_id" id="edit_product_id" class="mattress-product-select" required disabled>
+                                <option value="">ابتدا دسته‌بندی را انتخاب کنید</option>
                                 <?php foreach($products as $product): ?>
-                                    <option value="<?php echo $product->get_id(); ?>"><?php echo $product->get_name(); ?></option>
+                                    <?php $category_ids = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'ids']); ?>
+                                    <option value="<?php echo esc_attr($product->get_id()); ?>" data-categories="<?php echo esc_attr(implode(',', $category_ids)); ?>"><?php echo esc_html($product->get_name()); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -405,11 +428,21 @@ function mattress_advisor_rules_page() {
                     <div class="form-section">
                         <h3><span class="dashicons dashicons-products"></span> انتخاب محصول</h3>
                         <div class="form-group">
+                            <label for="product_category">دسته‌بندی محصول *</label>
+                            <select id="product_category" class="mattress-product-category" data-target-product="#product_id" required>
+                                <option value="">یک دسته‌بندی را انتخاب کنید</option>
+                                <?php foreach($product_categories as $category): ?>
+                                    <option value="<?php echo esc_attr($category->term_id); ?>"><?php echo esc_html($category->name); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="product_id">محصول پیشنهادی *</label>
-                            <select name="product_id" id="product_id" required>
-                                <option value="">یک محصول را انتخاب کنید</option>
+                            <select name="product_id" id="product_id" class="mattress-product-select" required disabled>
+                                <option value="">ابتدا دسته‌بندی را انتخاب کنید</option>
                                 <?php foreach($products as $product): ?>
-                                    <option value="<?php echo $product->get_id(); ?>"><?php echo $product->get_name(); ?></option>
+                                    <?php $category_ids = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'ids']); ?>
+                                    <option value="<?php echo esc_attr($product->get_id()); ?>" data-categories="<?php echo esc_attr(implode(',', $category_ids)); ?>"><?php echo esc_html($product->get_name()); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
