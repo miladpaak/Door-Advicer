@@ -19,6 +19,7 @@ function mattress_advisor_activate_tables() {
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         conditions text NOT NULL,
         product_id bigint(20) NOT NULL,
+        product_ids longtext NULL,
         key_features longtext NULL,
         why_suitable longtext NULL,
         match_count int(11) NOT NULL DEFAULT 0,
@@ -47,6 +48,7 @@ function mattress_advisor_activate_tables() {
 
 // Ensure history table has necessary columns (for upgrades)
 add_action('admin_init', 'mattress_advisor_ensure_history_schema');
+add_action('admin_init', 'mattress_advisor_ensure_rules_schema');
 function mattress_advisor_ensure_history_schema() {
     global $wpdb;
     $table = $wpdb->prefix . 'mattress_history';
@@ -56,6 +58,33 @@ function mattress_advisor_ensure_history_schema() {
         // Add column order_id
         $wpdb->query("ALTER TABLE $table ADD COLUMN order_id bigint(20) NULL AFTER product_id");
     }
+}
+
+function mattress_advisor_ensure_rules_schema() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'mattress_rules';
+    $col = $wpdb->get_results($wpdb->prepare("SHOW COLUMNS FROM $table LIKE %s", 'product_ids'));
+    if (empty($col)) {
+        $wpdb->query("ALTER TABLE $table ADD COLUMN product_ids longtext NULL AFTER product_id");
+    }
+}
+
+function mattress_advisor_extract_product_ids($rule) {
+    $product_ids = [];
+
+    if (isset($rule->product_ids) && !empty($rule->product_ids)) {
+        $decoded = json_decode($rule->product_ids, true);
+        if (is_array($decoded)) {
+            $product_ids = $decoded;
+        }
+    }
+
+    if (empty($product_ids) && isset($rule->product_id) && !empty($rule->product_id)) {
+        $product_ids = [intval($rule->product_id)];
+    }
+
+    $product_ids = array_values(array_unique(array_filter(array_map('intval', $product_ids))));
+    return $product_ids;
 }
 
 // ---------------------- AJAX: admin get rule ----------------------
@@ -79,6 +108,7 @@ function mattress_advisor_get_rule() {
     $rule = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $id));
 
     if ($rule) {
+        $rule->product_ids = mattress_advisor_extract_product_ids($rule);
         wp_send_json_success(['rule' => $rule]);
     } else {
         wp_send_json_error(['message' => 'قانون یافت نشد.']);
@@ -99,10 +129,14 @@ function mattress_advisor_update_rule() {
     $table = $wpdb->prefix . 'mattress_rules';
     
     $rule_id = isset($_POST['rule_id']) ? intval($_POST['rule_id']) : 0;
-    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-    
-    if (!$rule_id || !$product_id) {
-        wp_send_json_error(['message' => 'شناسه قانون و محصول الزامی است.']);
+    $preview_product_id = isset($_POST['product_id']) ? $_POST['product_id'] : 0;
+    if (is_array($preview_product_id)) {
+        $preview_product_id = reset($preview_product_id);
+    }
+    $product_id = intval($preview_product_id);
+
+    if (!$rule_id || !$product_id || !wc_get_product($product_id)) {
+        wp_send_json_error(['message' => 'شناسه قانون و محصول معتبر الزامی است.']);
     }
 
     // Define the fields that make up a rule's conditions
@@ -134,6 +168,7 @@ function mattress_advisor_update_rule() {
     // Prepare the final data for database insertion, ensuring all parts are sanitized.
     $data = [
         'product_id'   => $product_id,
+        'product_ids'  => wp_json_encode([$product_id]),
         'conditions'   => wp_json_encode($conditions),
         'key_features' => isset($_POST['key_features']) ? sanitize_textarea_field($_POST['key_features']) : '',
         'why_suitable' => isset($_POST['why_suitable']) ? sanitize_textarea_field($_POST['why_suitable']) : ''
@@ -214,15 +249,26 @@ function mattress_advisor_process_form() {
             if (!function_exists('wc_get_product')) {
                 wp_send_json_error('ووکامرس فعال نیست.');
             }
-            $product = wc_get_product($rule->product_id);
-            if ($product) {
+
+            $rule_product_ids = mattress_advisor_extract_product_ids($rule);
+            $matched_products = [];
+            foreach ($rule_product_ids as $rule_product_id) {
+                $matched_product = wc_get_product($rule_product_id);
+                if ($matched_product) {
+                    $matched_products[] = $matched_product;
+                }
+            }
+
+            if (!empty($matched_products)) {
                 require_once MATTRESS_ADVISOR_PATH . 'frontend/result-template.php';
+                $product = $matched_products[0];
+                $similar_products = array_slice($matched_products, 1);
                 $related_ids = wc_get_related_products($product->get_id(), 3);
                 $related = array_map('wc_get_product', $related_ids);
                 $history_id = mattress_advisor_save_history($form_data, $product->get_id());
                 $wpdb->query($wpdb->prepare("UPDATE $table SET match_count = match_count + 1 WHERE id = %d", $rule->id));
                 $display_options = get_option('mattress_advisor_display_options');
-                $html = mattress_advisor_render_result($product, $form_data, $related, $display_options, $history_id);
+                $html = mattress_advisor_render_result($product, $form_data, $related, $display_options, $history_id, $similar_products);
                 wp_send_json_success(['html' => $html, 'product_id' => $product->get_id(), 'history_id' => $history_id]);
             } else {
                 // This rule is broken, continue to the next one
@@ -277,16 +323,26 @@ function mattress_advisor_process_form() {
         if (!function_exists('wc_get_product')) {
             wp_send_json_error('ووکامرس فعال نیست.');
         }
-        $product = wc_get_product($best_rule->product_id);
-        if ($product) {
+        $best_rule_product_ids = mattress_advisor_extract_product_ids($best_rule);
+        $best_rule_products = [];
+        foreach ($best_rule_product_ids as $rule_product_id) {
+            $matched_product = wc_get_product($rule_product_id);
+            if ($matched_product) {
+                $best_rule_products[] = $matched_product;
+            }
+        }
+
+        if (!empty($best_rule_products)) {
             require_once MATTRESS_ADVISOR_PATH . 'frontend/result-template.php';
+            $product = $best_rule_products[0];
+            $similar_products = array_slice($best_rule_products, 1);
             $related_ids = wc_get_related_products($product->get_id(), 3);
             $related = array_map('wc_get_product', $related_ids);
             $history_id = mattress_advisor_save_history($form_data, $product->get_id());
             $wpdb->query($wpdb->prepare("UPDATE $table SET match_count = match_count + 1 WHERE id = %d", $best_rule->id));
             $notice = '<div class="approximate-notice" style="margin:15px 0;padding:12px 16px;border:1px solid #ffd54f;background:#fff8e1;border-radius:8px;color:#8d6e63;">نتیجه‌ی زیر نزدیک‌ترین پیشنهاد بر اساس شرایط شماست.</div>';
             $display_options = get_option('mattress_advisor_display_options');
-            $html = $notice . mattress_advisor_render_result($product, $form_data, $related, $display_options, $history_id);
+            $html = $notice . mattress_advisor_render_result($product, $form_data, $related, $display_options, $history_id, $similar_products);
             wp_send_json_success(['html' => $html, 'product_id' => $product->get_id(), 'history_id' => $history_id, 'approximate' => true, 'score' => $best_score]);
         }
     }
@@ -718,10 +774,20 @@ function mattress_advisor_add_rule() {
     $table = $wpdb->prefix . 'mattress_rules';
     
     // Get form data directly from $_POST since it's serialized
-    $product_id = intval($_POST['product_id']);
-    if ( !$product_id || !wc_get_product($product_id) ) {
-        wp_send_json_error(['message' => 'محصول انتخاب شده معتبر نیست.']);
+    $raw_product_ids = isset($_POST['product_id']) ? (array) $_POST['product_id'] : [];
+    $product_ids = array_values(array_unique(array_filter(array_map('intval', $raw_product_ids))));
+
+    if (empty($product_ids)) {
+        wp_send_json_error(['message' => 'حداقل یک محصول باید انتخاب شود.']);
     }
+
+    foreach ($product_ids as $pid) {
+        if (!wc_get_product($pid)) {
+            wp_send_json_error(['message' => 'یکی از محصولات انتخاب‌شده معتبر نیست.']);
+        }
+    }
+
+    $product_id = $product_ids[0];
 
     $conditions = [];
     
@@ -764,6 +830,7 @@ function mattress_advisor_add_rule() {
     $result = $wpdb->insert($table, [
         'conditions' => wp_json_encode($filtered),
         'product_id' => $product_id,
+        'product_ids' => wp_json_encode($product_ids),
         'key_features' => $key_features,
         'why_suitable' => $why_suitable
     ]);
@@ -814,7 +881,11 @@ function mattress_advisor_preview_rule() {
         wp_send_json_error(['message' => 'ووکامرس فعال نیست.']);
     }
 
-    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+    $preview_product_id = isset($_POST['product_id']) ? $_POST['product_id'] : 0;
+    if (is_array($preview_product_id)) {
+        $preview_product_id = reset($preview_product_id);
+    }
+    $product_id = intval($preview_product_id);
     if (!$product_id) {
         wp_send_json_error(['message' => 'محصول انتخاب نشده است.']);
     }

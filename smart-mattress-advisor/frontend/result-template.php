@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function mattress_advisor_render_result( $product, $form_data, $related_products = [], $display_options = [], $history_id = null ) {
+function mattress_advisor_render_result( $product, $form_data, $related_products = [], $display_options = [], $history_id = null, $similar_products = [] ) {
     global $wpdb;
     $rules_table = $wpdb->prefix . 'mattress_rules';
     
@@ -67,6 +67,43 @@ function mattress_advisor_render_result( $product, $form_data, $related_products
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($similar_products)): ?>
+        <div class="similar-products-showcase">
+            <h3 class="section-title">
+                <span class="section-icon">✨</span>
+                پیشنهادهای مشابه با شرایط یکسان
+            </h3>
+            <div class="similar-products-grid">
+                <?php foreach ($similar_products as $similar_product): if(!$similar_product) continue; ?>
+                    <a class="similar-product-card" href="<?php echo esc_url(get_permalink($similar_product->get_id())); ?>">
+                        <div class="similar-product-image">
+                            <?php
+                            $similar_image_id = method_exists($similar_product, 'get_image_id') ? $similar_product->get_image_id() : 0;
+                            if ($similar_image_id) {
+                                echo wp_get_attachment_image(
+                                    $similar_image_id,
+                                    'thumbnail',
+                                    false,
+                                    [
+                                        'class' => 'similar-thumb',
+                                        'loading' => 'lazy',
+                                        'decoding' => 'async',
+                                        'fetchpriority' => 'low',
+                                        'alt' => $similar_product->get_name(),
+                                    ]
+                                );
+                            } else {
+                                echo '<img class="similar-thumb" src="' . esc_url(get_the_post_thumbnail_url($similar_product->get_id(), 'thumbnail')) . '" alt="' . esc_attr($similar_product->get_name()) . '" loading="lazy" decoding="async" fetchpriority="low">';
+                            }
+                            ?>
+                        </div>
+                        <div class="similar-product-price"><?php echo $similar_product->get_price_html(); ?></div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <?php
         $show_short_description = isset($display_options['show_short_description']) && $display_options['show_short_description'];
