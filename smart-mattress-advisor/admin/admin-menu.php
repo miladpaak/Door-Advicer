@@ -437,8 +437,8 @@ function mattress_advisor_rules_page() {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="product_id">محصول پیشنهادی *</label>
-                            <select name="product_id" id="product_id" class="mattress-product-select" required disabled>
+                            <label for="product_id">محصول پیشنهادی * (قابل انتخاب چندتایی)</label>
+                            <select name="product_id[]" id="product_id" class="mattress-product-select" required disabled multiple size="8">
                                 <option value="">ابتدا دسته‌بندی را انتخاب کنید</option>
                                 <?php foreach($products as $product): ?>
                                     <?php $category_ids = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'ids']); ?>

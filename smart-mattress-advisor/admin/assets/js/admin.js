@@ -25,6 +25,10 @@ jQuery(document).ready(function($) {
         }
 
         var currentValue = productSelect.val();
+        if (!Array.isArray(currentValue)) {
+            currentValue = currentValue ? [currentValue] : [];
+        }
+
         var hasVisibleOption = false;
 
         productSelect.find('option').each(function(index) {
@@ -35,31 +39,34 @@ jQuery(document).ready(function($) {
             }
 
             if (!categoryId) {
-                option.hide();
+                option.hide().prop('selected', false);
                 return;
             }
 
             var categories = (option.data('categories') || '').toString().split(',');
             var isMatch = categories.indexOf(categoryId.toString()) !== -1;
             option.toggle(isMatch);
-            if (isMatch) {
+            if (!isMatch) {
+                option.prop('selected', false);
+            } else {
                 hasVisibleOption = true;
             }
         });
 
         if (!categoryId) {
             productSelect.prop('disabled', true);
-            productSelect.val('');
+            productSelect.val([]);
             productSelect.find('option:first').text('ابتدا دسته‌بندی را انتخاب کنید');
             return;
         }
 
         productSelect.prop('disabled', false);
-        productSelect.find('option:first').text(hasVisibleOption ? 'یک محصول را انتخاب کنید' : 'محصولی در این دسته‌بندی یافت نشد');
+        productSelect.find('option:first').text(hasVisibleOption ? 'یک یا چند محصول را انتخاب کنید' : 'محصولی در این دسته‌بندی یافت نشد');
 
-        if (!currentValue || !productSelect.find('option[value="' + currentValue + '"]:visible').length) {
-            productSelect.val('');
-        }
+        var visibleSelectedValues = currentValue.filter(function(value) {
+            return productSelect.find('option[value="' + value + '"]:visible').length;
+        });
+        productSelect.val(visibleSelectedValues);
     }
 
     $(document).on('change', '.mattress-product-category', function() {
@@ -127,7 +134,7 @@ jQuery(document).ready(function($) {
                         $('#edit_product_category').val(categories[0]);
                         filterProductsByCategory('#edit_product_category');
                     }
-                    $('#edit_product_id').val(rule.product_id);
+                    $('#edit_product_id').val(String(rule.product_id));
                 }
 
                 var conditions = {};
@@ -347,6 +354,10 @@ jQuery(document).ready(function($) {
     // -------- Conflict check before save (add form only) --------
     $(document).on('click', '#add-rule-form button[type="submit"]', function(e){
         var form = $('#add-rule-form');
+        var selectedProducts = form.find('[name="product_id[]"]').val() || [];
+        if (!selectedProducts.length) {
+            return;
+        }
         var data = form.serialize() + '&action=check_mattress_rule_conflicts&nonce=' + mattress_ajax.nonce;
         var submitBtn = $(this);
         // Run sync check; if conflicts, confirm
