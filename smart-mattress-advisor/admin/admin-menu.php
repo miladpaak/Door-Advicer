@@ -6,8 +6,8 @@ add_action('admin_enqueue_scripts', 'mattress_advisor_admin_assets');
 
 function mattress_advisor_admin_menu() {
     add_menu_page(
-        'مشاور تشک',
-        'مشاور تشک',
+        'مشاور درب',
+        'مشاور درب',
         'manage_options',
         'mattress-advisor',
         'mattress_advisor_rules_page', // changed from mattress_advisor_admin_page
@@ -75,9 +75,9 @@ function mattress_advisor_rules_page() {
                 <h1>
                 <img src="<?php echo MATTRESS_ADVISOR_URL . 'assets/logo-placeholder.webp'; ?>" alt="Smart Mattress Advisor" style="height: 40px; width: auto; margin-left: 15px; vertical-align: middle;">
                 <span class="dashicons dashicons-admin-settings"></span> 
-                مدیریت مشاوره پیشنهاد تشک
+                مدیریت مشاوره فروش درب
             </h1>
-            <p class="description">از این بخش می‌توانید پرسش/پاسخ‌ها و قواعد مشاوره‌ای برای پیشنهاد تشک مناسب به کاربران تعریف کنید.</p>
+            <p class="description">از این بخش می‌توانید پرسش/پاسخ‌ها و قواعد مشاوره‌ای برای پیشنهاد درب مناسب به کاربران تعریف کنید.</p>
         </div>
 
         <div class="admin-tabs">
@@ -99,15 +99,15 @@ function mattress_advisor_rules_page() {
                 <?php if ($rules): ?>
                     <div class="rules-filters" style="margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;">
                         <input type="text" id="filter-text" placeholder="جستجو در شرایط یا عنوان محصول" style="min-width:220px;">
-                        <select id="filter-persons">
-                            <option value="">نفرات</option>
-                            <option value="1">یک نفره</option>
-                            <option value="2">دو نفره</option>
+                        <select id="filter-door-type">
+                            <option value="">نوع درب</option>
+                            <option value="entrance">ورودی</option>
+                            <option value="interior">داخلی</option>
                         </select>
-                        <select id="filter-sleep">
-                            <option value="">نوع خواب</option>
-                            <option value="light">سبک</option>
-                            <option value="heavy">سنگین</option>
+                        <select id="filter-building-type">
+                            <option value="">نوع ساختمان</option>
+                            <option value="apartment">آپارتمانی</option>
+                            <option value="villa">ویلایی</option>
                         </select>
                         <button id="filter-clear" class="button">پاک‌سازی فیلتر</button>
                     </div>
@@ -137,25 +137,27 @@ function mattress_advisor_rules_page() {
                                         <?php 
                                             $conditions = json_decode($rule->conditions, true);
                                             $condition_labels = [
-                                                'age' => 'سن',
-                                                'height' => 'قد',
-                                                'weight' => 'وزن',
-                                                'back_curve' => 'گودی کمر',
-                                                'sleep_type' => 'نوع خواب',
-                                                'persons' => 'تعداد نفرات',
-                                                'quality' => 'کیفیت',
-                                                'elasticity' => 'حالت ارتجاعی',
-                                                'back_pain' => 'مشکل کمر',
-                                                'usage_type' => 'نوع استفاده',
-                                                'usage_place' => 'نوع کاربرد'
+                                                'door_type' => 'نوع درب',
+                                                'building_type' => 'نوع ساختمان',
+                                                'weather_exposure' => 'برخورد آفتاب و باران',
+                                                'facade_style' => 'سبک نما',
+                                                'entrance_material' => 'متریال درب ورودی',
+                                                'door_width' => 'عرض درب',
+                                                'door_height' => 'ارتفاع درب',
+                                                'waterproof' => 'ضدآب',
+                                                'metal_frame_installed' => 'چهارچوب فلزی نصب شده',
+                                                'usage_space' => 'فضای مورد استفاده',
+                                                'interior_style' => 'سبک داخلی',
+                                                'color_theme' => 'تم رنگ',
+                                                'weatherstrip' => 'نوار درزگیر',
+                                                'interior_material' => 'جنس درب داخلی'
                                             ];
                                             // Merge numeric ranges for display
                                             $ranges = [
-                                                'age' => ['min' => isset($conditions['age_min']) ? $conditions['age_min'] : null, 'max' => isset($conditions['age_max']) ? $conditions['age_max'] : null],
-                                                'height' => ['min' => isset($conditions['height_min']) ? $conditions['height_min'] : null, 'max' => isset($conditions['height_max']) ? $conditions['height_max'] : null],
-                                                'weight' => ['min' => isset($conditions['weight_min']) ? $conditions['weight_min'] : null, 'max' => isset($conditions['weight_max']) ? $conditions['weight_max'] : null]
+                                                'door_width' => ['min' => isset($conditions['door_width_min']) ? $conditions['door_width_min'] : null, 'max' => isset($conditions['door_width_max']) ? $conditions['door_width_max'] : null],
+                                                'door_height' => ['min' => isset($conditions['door_height_min']) ? $conditions['door_height_min'] : null, 'max' => isset($conditions['door_height_max']) ? $conditions['door_height_max'] : null]
                                             ];
-                                            foreach (['age','height','weight'] as $nk) {
+                                            foreach (['door_width','door_height'] as $nk) {
                                                 if ($ranges[$nk]['min'] !== null || $ranges[$nk]['max'] !== null) {
                                                     $label = $condition_labels[$nk];
                                                     $min = $ranges[$nk]['min'] !== null ? $ranges[$nk]['min'] : '—';
@@ -251,7 +253,7 @@ function mattress_advisor_rules_page() {
                                 <select name="back_curve" id="edit_back_curve">
                                     <option value="">انتخاب کنید</option>
                                     <option value="has_curve">دارم</option>
-                                    <option value="supports_curve">تشکِ مناسب گودی کمر</option>
+                                    <option value="supports_curve">گزینه مناسب</option>
                                     <option value="not_allowed">خرید مجاز نیست</option>
                                 </select>
                             </div>
@@ -276,7 +278,7 @@ function mattress_advisor_rules_page() {
 
                     <!-- Mattress Preferences -->
                     <div class="form-section">
-                        <h3><span class="dashicons dashicons-admin-settings"></span> ترجیحات تشک</h3>
+                        <h3><span class="dashicons dashicons-admin-settings"></span> ترجیحات درب</h3>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="edit_quality">کیفیت</label>
@@ -329,6 +331,36 @@ function mattress_advisor_rules_page() {
                         </div>
                     </div>
 
+
+                    <!-- Door Conditions -->
+                    <div class="form-section">
+                        <h3><span class="dashicons dashicons-admin-home"></span> شرایط درب</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label for="edit_door_type">نوع درب</label><select name="door_type" id="edit_door_type"><option value="">انتخاب کنید</option><option value="entrance">ورودی</option><option value="interior">داخلی</option></select></div>
+                            <div class="form-group"><label for="edit_building_type">نوع ساختمان</label><select name="building_type" id="edit_building_type"><option value="">انتخاب کنید</option><option value="apartment">آپارتمانی</option><option value="villa">ویلایی</option></select></div>
+                            <div class="form-group"><label for="edit_weather_exposure">برخورد آفتاب و باران</label><select name="weather_exposure" id="edit_weather_exposure"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="edit_facade_style">سبک نما</label><select name="facade_style" id="edit_facade_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                            <div class="form-group"><label for="edit_entrance_material">متریال درب ورودی</label><select name="entrance_material" id="edit_entrance_material"><option value="">انتخاب کنید</option><option value="wood">چوب</option><option value="metal">فلزی</option><option value="glass">شیشه</option><option value="thermowood">ترمو وود</option><option value="mdf">MDF</option><option value="synthetic_coating">روکش مصنوعی</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>عرض درب (بازه)</label><div class="range-row"><input type="number" name="door_width_min" min="60" max="350" placeholder="حداقل"><input type="number" name="door_width_max" min="60" max="350" placeholder="حداکثر"></div></div>
+                            <div class="form-group"><label>ارتفاع درب (بازه)</label><div class="range-row"><input type="number" name="door_height_min" min="150" max="350" placeholder="حداقل"><input type="number" name="door_height_max" min="150" max="350" placeholder="حداکثر"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="edit_waterproof">ضدآب</label><select name="waterproof" id="edit_waterproof"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                            <div class="form-group"><label for="edit_metal_frame_installed">چهارچوب فلزی نصب شده</label><select name="metal_frame_installed" id="edit_metal_frame_installed"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                            <div class="form-group"><label for="edit_usage_space">فضای مورد استفاده</label><select name="usage_space" id="edit_usage_space"><option value="">انتخاب کنید</option><option value="room">اتاق</option><option value="wc">سرویس بهداشتی</option><option value="bathroom">حمام</option><option value="pool">استخر</option><option value="management">اتاق مدیریت</option><option value="conference">کنفرانس</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="edit_interior_style">سبک داخلی</label><select name="interior_style" id="edit_interior_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                            <div class="form-group"><label for="edit_color_theme">تم رنگ</label><select name="color_theme" id="edit_color_theme"><option value="">انتخاب کنید</option><option value="colored">رنگی</option><option value="black_theme">تم سیاه</option><option value="light_theme">تم روشن</option></select></div>
+                            <div class="form-group"><label for="edit_weatherstrip">نوار درزگیر</label><select name="weatherstrip" id="edit_weatherstrip"><option value="">انتخاب کنید</option><option value="yes">دارد</option><option value="no">ندارد</option></select></div>
+                            <div class="form-group"><label for="edit_interior_material">جنس درب داخلی</label><select name="interior_material" id="edit_interior_material"><option value="">انتخاب کنید</option><option value="mdf_melamine">MDF و ملامینه</option><option value="abs">ABS</option><option value="polywood">پلی وود</option></select></div>
+                        </div>
+                    </div>
+
                     <!-- Product Features -->
                     <div class="form-section">
                         <h3><span class="dashicons dashicons-star-filled"></span> ویژگی‌های کلیدی محصول</h3>
@@ -340,10 +372,10 @@ function mattress_advisor_rules_page() {
 
                     <!-- Why Suitable -->
                     <div class="form-section">
-                        <h3><span class="dashicons dashicons-lightbulb"></span> چرا این تشک برای شما مناسب است؟</h3>
+                        <h3><span class="dashicons dashicons-lightbulb"></span> چرا این درب برای شما مناسب است؟</h3>
                         <div class="form-group">
                             <label for="edit_why_suitable">توضیحات مناسب بودن</label>
-                            <textarea name="why_suitable" id="edit_why_suitable" rows="4" placeholder="مثال:&#10;به دلیل وزن بالاتر از ۸۰ کیلوگرم، تشک‌های با تراکم بالا و فوم فشرده برای شما مناسب هستند.&#10;چون خواب سنگین دارید، تشک با استحکام و ساپورت بالا برای شما توصیه می‌شود.&#10;با توجه به مشکل کمر، تشک طبی با فوم مموری پیشنهاد می‌شود."></textarea>
+                            <textarea name="why_suitable" id="edit_why_suitable" rows="4" placeholder="مثال:&#10;به دلیل وزن بالاتر از ۸۰ کیلوگرم، درب‌های مقاوم با متریال مناسب برای شما مناسب هستند.&#10;چون خواب سنگین دارید، درب با کیفیت و دوام بالا برای شما توصیه می‌شود.&#10;با توجه به مشکل کمر، درب مناسب فضای شما پیشنهاد می‌شود."></textarea>
                         </div>
                     </div>
 
@@ -443,7 +475,7 @@ function mattress_advisor_rules_page() {
                                 <select name="back_curve" id="back_curve">
                                     <option value="">انتخاب کنید</option>
                                     <option value="has_curve">مناسب افرادی که گودی کمر دارند</option>
-                                    <option value="supports_curve">تشکِ مناسب گودی کمر</option>
+                                    <option value="supports_curve">گزینه مناسب</option>
                                     <option value="not_allowed">در صورت داشتن گودی کمر خرید مجاز نیست</option>
                                 </select>
                             </div>
@@ -505,6 +537,37 @@ function mattress_advisor_rules_page() {
                         </div>
                     </div>
 
+
+
+                    <!-- Door Conditions -->
+                    <div class="form-section">
+                        <h3><span class="dashicons dashicons-admin-home"></span> شرایط درب</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label for="door_type">نوع درب</label><select name="door_type" id="door_type"><option value="">انتخاب کنید</option><option value="entrance">ورودی</option><option value="interior">داخلی</option></select></div>
+                            <div class="form-group"><label for="building_type">نوع ساختمان</label><select name="building_type" id="building_type"><option value="">انتخاب کنید</option><option value="apartment">آپارتمانی</option><option value="villa">ویلایی</option></select></div>
+                            <div class="form-group"><label for="weather_exposure">برخورد آفتاب و باران</label><select name="weather_exposure" id="weather_exposure"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="facade_style">سبک نما</label><select name="facade_style" id="facade_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                            <div class="form-group"><label for="entrance_material">متریال درب ورودی</label><select name="entrance_material" id="entrance_material"><option value="">انتخاب کنید</option><option value="wood">چوب</option><option value="metal">فلزی</option><option value="glass">شیشه</option><option value="thermowood">ترمو وود</option><option value="mdf">MDF</option><option value="synthetic_coating">روکش مصنوعی</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>عرض درب (بازه)</label><div class="range-row"><input type="number" name="door_width_min" min="60" max="350" placeholder="حداقل"><input type="number" name="door_width_max" min="60" max="350" placeholder="حداکثر"></div></div>
+                            <div class="form-group"><label>ارتفاع درب (بازه)</label><div class="range-row"><input type="number" name="door_height_min" min="150" max="350" placeholder="حداقل"><input type="number" name="door_height_max" min="150" max="350" placeholder="حداکثر"></div></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="waterproof">ضدآب</label><select name="waterproof" id="waterproof"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                            <div class="form-group"><label for="metal_frame_installed">چهارچوب فلزی نصب شده</label><select name="metal_frame_installed" id="metal_frame_installed"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                            <div class="form-group"><label for="usage_space">فضای مورد استفاده</label><select name="usage_space" id="usage_space"><option value="">انتخاب کنید</option><option value="room">اتاق</option><option value="wc">سرویس بهداشتی</option><option value="bathroom">حمام</option><option value="pool">استخر</option><option value="management">اتاق مدیریت</option><option value="conference">کنفرانس</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="interior_style">سبک داخلی</label><select name="interior_style" id="interior_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                            <div class="form-group"><label for="color_theme">تم رنگ</label><select name="color_theme" id="color_theme"><option value="">انتخاب کنید</option><option value="colored">رنگی</option><option value="black_theme">تم سیاه</option><option value="light_theme">تم روشن</option></select></div>
+                            <div class="form-group"><label for="weatherstrip">نوار درزگیر</label><select name="weatherstrip" id="weatherstrip"><option value="">انتخاب کنید</option><option value="yes">دارد</option><option value="no">ندارد</option></select></div>
+                            <div class="form-group"><label for="interior_material">جنس درب داخلی</label><select name="interior_material" id="interior_material"><option value="">انتخاب کنید</option><option value="mdf_melamine">MDF و ملامینه</option><option value="abs">ABS</option><option value="polywood">پلی وود</option></select></div>
+                        </div>
+                    </div>
+
                     <!-- Product Features -->
                     <div class="form-section">
                         <h3><span class="dashicons dashicons-star-filled"></span> ویژگی‌های کلیدی محصول</h3>
@@ -516,10 +579,10 @@ function mattress_advisor_rules_page() {
 
                     <!-- Why Suitable -->
                     <div class="form-section">
-                        <h3><span class="dashicons dashicons-lightbulb"></span> چرا این تشک برای شما مناسب است؟</h3>
+                        <h3><span class="dashicons dashicons-lightbulb"></span> چرا این درب برای شما مناسب است؟</h3>
                         <div class="form-group">
                             <label for="why_suitable">توضیحات مناسب بودن</label>
-                            <textarea name="why_suitable" id="why_suitable" rows="4" placeholder="مثال:&#10;به دلیل وزن بالاتر از ۸۰ کیلوگرم، تشک‌های با تراکم بالا و فوم فشرده برای شما مناسب هستند.&#10;چون خواب سنگین دارید، تشک با استحکام و ساپورت بالا برای شما توصیه می‌شود.&#10;با توجه به مشکل کمر، تشک طبی با فوم مموری پیشنهاد می‌شود."></textarea>
+                            <textarea name="why_suitable" id="why_suitable" rows="4" placeholder="مثال:&#10;به دلیل وزن بالاتر از ۸۰ کیلوگرم، درب‌های مقاوم با متریال مناسب برای شما مناسب هستند.&#10;چون خواب سنگین دارید، درب با کیفیت و دوام بالا برای شما توصیه می‌شود.&#10;با توجه به مشکل کمر، درب مناسب فضای شما پیشنهاد می‌شود."></textarea>
                         </div>
                     </div>
 
