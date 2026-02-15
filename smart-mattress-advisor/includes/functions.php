@@ -115,8 +115,19 @@ function mattress_advisor_update_rule() {
 
     $conditions = [];
     foreach ($condition_keys as $key) {
-        if (isset($_POST[$key]) && $_POST[$key] !== '') {
-            $conditions[sanitize_key($key)] = sanitize_text_field($_POST[$key]);
+        if (!isset($_POST[$key]) || $_POST[$key] === '') {
+            continue;
+        }
+
+        $raw = $_POST[$key];
+        if (is_array($raw)) {
+            $sanitized_items = array_map('sanitize_text_field', $raw);
+            $sanitized_items = array_filter(array_map('trim', $sanitized_items));
+            if (!empty($sanitized_items)) {
+                $conditions[sanitize_key($key)] = implode(',', $sanitized_items);
+            }
+        } else {
+            $conditions[sanitize_key($key)] = sanitize_text_field($raw);
         }
     }
 
@@ -186,7 +197,13 @@ function mattress_advisor_process_form() {
             } else {
                 $lhs = isset($form_data[$key]) ? mattress_advisor_normalize_value($key, $form_data[$key]) : null;
                 $rhs = mattress_advisor_normalize_value($key, $value);
-                if ($lhs === null || (string)$lhs !== (string)$rhs) {
+                if ($key === 'entrance_material') {
+                    $rhs_values = array_filter(array_map('trim', explode(',', (string)$rhs)));
+                    if ($lhs === null || empty($rhs_values) || !in_array((string)$lhs, $rhs_values, true)) {
+                        $matched = false;
+                        break;
+                    }
+                } elseif ($lhs === null || (string)$lhs !== (string)$rhs) {
                     $matched = false;
                     break;
                 }
@@ -240,7 +257,12 @@ function mattress_advisor_process_form() {
                 }
             } else {
                 $rule_val_norm = mattress_advisor_normalize_value($key, $conditions[$key]);
-                if ((string)$form_val_norm === (string)$rule_val_norm) {
+                if ($key === 'entrance_material') {
+                    $rule_values = array_filter(array_map('trim', explode(',', (string)$rule_val_norm)));
+                    if (in_array((string)$form_val_norm, $rule_values, true)) {
+                        $score += 10;
+                    }
+                } elseif ((string)$form_val_norm === (string)$rule_val_norm) {
                     $score += 10;
                 }
             }
@@ -594,7 +616,7 @@ function mattress_advisor_explain_choice( $form_data ) {
 
     if ( isset($form_data['door_type']) && $form_data['door_type'] === 'interior' ) {
         $reasons[] = 'با توجه به داخلی بودن درب، هماهنگی با دکوراسیون و کاربری فضا لحاظ شده است.';
-        if ( isset($form_data['waterproof']) && $form_data['waterproof'] === 'yes' ) {
+        if ( isset($form_data['waterproof']) && in_array($form_data['waterproof'], ['yes', 'water_resistant', 'waterproof'], true) ) {
             $reasons[] = 'به دلیل نیاز به مقاومت رطوبتی، گزینه‌های ضدآب در اولویت قرار گرفته‌اند.';
         }
     }
@@ -619,10 +641,21 @@ function mattress_advisor_normalize_value( $key, $value ) {
             $map = ['آپارتمانی' => 'apartment', 'ویلایی' => 'villa', 'apartment' => 'apartment', 'villa' => 'villa'];
             return $map[$val] ?? strtolower($val);
         case 'weather_exposure':
-        case 'waterproof':
         case 'metal_frame_installed':
         case 'weatherstrip':
             $map = ['بله' => 'yes', 'خیر' => 'no', 'دارد' => 'yes', 'ندارد' => 'no', 'yes' => 'yes', 'no' => 'no'];
+            return $map[$val] ?? strtolower($val);
+        case 'waterproof':
+            $map = [
+                'بله' => 'yes',
+                'خیر' => 'no',
+                'yes' => 'yes',
+                'no' => 'no',
+                'water_resistant' => 'water_resistant',
+                'waterproof' => 'waterproof',
+                'مقاوم به آب' => 'water_resistant',
+                '100%ضدآب' => 'waterproof',
+            ];
             return $map[$val] ?? strtolower($val);
         default:
             return strtolower($val);
@@ -695,7 +728,15 @@ function mattress_advisor_add_rule() {
     // Process all form fields except product_id, action, nonce, key_features, and why_suitable
     foreach ($_POST as $key => $value) {
         if ( !in_array($key, ['product_id', 'action', 'nonce', 'key_features', 'why_suitable']) && !empty($value) ) {
-            $conditions[sanitize_key($key)] = sanitize_text_field($value);
+            if (is_array($value)) {
+                $sanitized_items = array_map('sanitize_text_field', $value);
+                $sanitized_items = array_filter(array_map('trim', $sanitized_items));
+                if (!empty($sanitized_items)) {
+                    $conditions[sanitize_key($key)] = implode(',', $sanitized_items);
+                }
+            } else {
+                $conditions[sanitize_key($key)] = sanitize_text_field($value);
+            }
         }
     }
 
@@ -811,7 +852,15 @@ function mattress_advisor_check_conflicts() {
     $new_conditions = [];
     foreach ($allowed_keys as $key) {
         if (isset($_POST[$key]) && $_POST[$key] !== '') {
-            $new_conditions[$key] = sanitize_text_field($_POST[$key]);
+            if (is_array($_POST[$key])) {
+                $sanitized_items = array_map('sanitize_text_field', $_POST[$key]);
+                $sanitized_items = array_filter(array_map('trim', $sanitized_items));
+                if (!empty($sanitized_items)) {
+                    $new_conditions[$key] = implode(',', $sanitized_items);
+                }
+            } else {
+                $new_conditions[$key] = sanitize_text_field($_POST[$key]);
+            }
         }
     }
 
@@ -845,7 +894,14 @@ function mattress_advisor_check_conflicts() {
                     }
                 }
             } else { // Handle exact match conflicts
-                if ((string)$new_val !== (string)$existing_conditions[$key]) {
+                if ($key === 'entrance_material') {
+                    $new_values = array_filter(array_map('trim', explode(',', (string)$new_val)));
+                    $existing_values = array_filter(array_map('trim', explode(',', (string)$existing_conditions[$key])));
+                    if (empty(array_intersect($new_values, $existing_values))) {
+                        $is_conflict = false;
+                        break;
+                    }
+                } elseif ((string)$new_val !== (string)$existing_conditions[$key]) {
                     $is_conflict = false; // Values are different, no conflict
                     break;
                 }

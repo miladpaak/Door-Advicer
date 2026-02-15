@@ -415,156 +415,42 @@ function mattress_advisor_rules_page() {
                         </div>
                     </div>
 
-                    <!-- Physical Characteristics -->
-                    <div class="form-section">
-                        <h3><span class="dashicons dashicons-admin-users"></span> مشخصات فیزیکی</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>سن (بازه)</label>
-                                <div class="range-row">
-                                    <input type="number" name="age_min" min="1" max="120" placeholder="حداقل">
-                                    <input type="number" name="age_max" min="1" max="120" placeholder="حداکثر">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>قد (سانتی‌متر، بازه)</label>
-                                <div class="range-row">
-                                    <input type="number" name="height_min" min="100" max="250" placeholder="حداقل">
-                                    <input type="number" name="height_max" min="100" max="250" placeholder="حداکثر">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>وزن (کیلوگرم، بازه)</label>
-                                <div class="range-row">
-                                    <input type="number" name="weight_min" min="30" max="200" placeholder="حداقل">
-                                    <input type="number" name="weight_max" min="30" max="200" placeholder="حداکثر">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sleep Preferences -->
-                    <div class="form-section">
-                        <h3><span class="dashicons dashicons-clock"></span> ترجیحات خواب</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sleep_type">نوع خواب</label>
-                                <select name="sleep_type" id="sleep_type">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="light">سبک</option>
-                                    <option value="heavy">سنگین</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="persons">تعداد نفرات</label>
-                                <select name="persons" id="persons">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="1">یک نفره</option>
-                                    <option value="2">دو نفره</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Health Conditions -->
-                    <div class="form-section">
-                        <h3><span class="dashicons dashicons-heart"></span> وضعیت سلامتی</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="back_curve">گودی کمر</label>
-                                <select name="back_curve" id="back_curve">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="has_curve">مناسب افرادی که گودی کمر دارند</option>
-                                    <option value="supports_curve">گزینه مناسب</option>
-                                    <option value="not_allowed">در صورت داشتن گودی کمر خرید مجاز نیست</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="back_pain">مشکل کمر</label>
-                                <select name="back_pain" id="back_pain">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="no">ندارد</option>
-                                    <option value="yes">دارد</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Specifications -->
-                    <div class="form-section">
-                        <h3><span class="dashicons dashicons-admin-tools"></span> مشخصات محصول</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="quality">کیفیت</label>
-                                <select name="quality" id="quality">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="excellent">عالی</option>
-                                    <option value="good">مطلوب</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="elasticity">حالت ارتجاعی</label>
-                                <select name="elasticity" id="elasticity">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="low">کم</option>
-                                    <option value="very_low">خیلی کم</option>
-                                    <option value="has">دارد</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Usage Information -->
-                    <div class="form-section">
-                        <h3><span class="dashicons dashicons-location"></span> اطلاعات استفاده</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="usage_type">نوع استفاده</label>
-                                <select name="usage_type" id="usage_type">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="temporary">موقت</option>
-                                    <option value="permanent">دائم</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="usage_place">نوع کاربرد</label>
-                                <select name="usage_place" id="usage_place">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="home">خانه</option>
-                                    <option value="villa">ویلا</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-
-
                     <!-- Door Conditions -->
                     <div class="form-section">
                         <h3><span class="dashicons dashicons-admin-home"></span> شرایط درب</h3>
                         <div class="form-row">
                             <div class="form-group"><label for="door_type">نوع درب</label><select name="door_type" id="door_type"><option value="">انتخاب کنید</option><option value="entrance">ورودی</option><option value="interior">داخلی</option></select></div>
-                            <div class="form-group"><label for="building_type">نوع ساختمان</label><select name="building_type" id="building_type"><option value="">انتخاب کنید</option><option value="apartment">آپارتمانی</option><option value="villa">ویلایی</option></select></div>
-                            <div class="form-group"><label for="weather_exposure">برخورد آفتاب و باران</label><select name="weather_exposure" id="weather_exposure"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="facade_style">سبک نما</label><select name="facade_style" id="facade_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
-                            <div class="form-group"><label for="entrance_material">متریال درب ورودی</label><select name="entrance_material" id="entrance_material"><option value="">انتخاب کنید</option><option value="wood">چوب</option><option value="metal">فلزی</option><option value="glass">شیشه</option><option value="thermowood">ترمو وود</option><option value="mdf">MDF</option><option value="synthetic_coating">روکش مصنوعی</option></select></div>
+
+                        <div class="door-conditions-subsection">
+                            <h4>درب ورودی</h4>
+                            <div class="form-row">
+                                <div class="form-group"><label for="building_type">نوع ساختمان</label><select name="building_type" id="building_type"><option value="">انتخاب کنید</option><option value="apartment">آپارتمانی</option><option value="villa">ویلایی</option></select></div>
+                                <div class="form-group"><label for="weather_exposure">برخورد آفتاب و باران</label><select name="weather_exposure" id="weather_exposure"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                                <div class="form-group"><label for="facade_style">سبک نما</label><select name="facade_style" id="facade_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="entrance_material">متریال درب ورودی</label><select name="entrance_material[]" id="entrance_material" multiple><option value="wood">چوب</option><option value="metal">فلزی</option><option value="glass">شیشه</option><option value="thermowood">ترمو وود</option><option value="mdf">MDF</option><option value="synthetic_coating">روکش مصنوعی</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>عرض درب</label><small class="field-help">ارتفاع تا 235 و عرض تا 220 برای درب ضد سرقت</small><div class="range-row"><input type="number" name="door_width_max" min="60" max="350" placeholder="واحد به سانتی متر"></div></div>
+                                <div class="form-group"><label>ارتفاع درب (بازه)</label><div class="range-row"><input type="number" name="door_height_min" min="150" max="350" placeholder="حداقل"><input type="number" name="door_height_max" min="150" max="350" placeholder="حداکثر"></div></div>
+                            </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group"><label>عرض درب (بازه)</label><div class="range-row"><input type="number" name="door_width_min" min="60" max="350" placeholder="حداقل"><input type="number" name="door_width_max" min="60" max="350" placeholder="حداکثر"></div></div>
-                            <div class="form-group"><label>ارتفاع درب (بازه)</label><div class="range-row"><input type="number" name="door_height_min" min="150" max="350" placeholder="حداقل"><input type="number" name="door_height_max" min="150" max="350" placeholder="حداکثر"></div></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="waterproof">ضدآب</label><select name="waterproof" id="waterproof"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
-                            <div class="form-group"><label for="metal_frame_installed">چهارچوب فلزی نصب شده</label><select name="metal_frame_installed" id="metal_frame_installed"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
-                            <div class="form-group"><label for="usage_space">فضای مورد استفاده</label><select name="usage_space" id="usage_space"><option value="">انتخاب کنید</option><option value="room">اتاق</option><option value="wc">سرویس بهداشتی</option><option value="bathroom">حمام</option><option value="pool">استخر</option><option value="management">اتاق مدیریت</option><option value="conference">کنفرانس</option></select></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label for="interior_style">سبک داخلی</label><select name="interior_style" id="interior_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
-                            <div class="form-group"><label for="color_theme">تم رنگ</label><select name="color_theme" id="color_theme"><option value="">انتخاب کنید</option><option value="colored">رنگی</option><option value="black_theme">تم سیاه</option><option value="light_theme">تم روشن</option></select></div>
-                            <div class="form-group"><label for="weatherstrip">نوار درزگیر</label><select name="weatherstrip" id="weatherstrip"><option value="">انتخاب کنید</option><option value="yes">دارد</option><option value="no">ندارد</option></select></div>
-                            <div class="form-group"><label for="interior_material">جنس درب داخلی</label><select name="interior_material" id="interior_material"><option value="">انتخاب کنید</option><option value="mdf_melamine">MDF و ملامینه</option><option value="abs">ABS</option><option value="polywood">پلی وود</option></select></div>
+
+                        <div class="door-conditions-subsection">
+                            <h4>درب داخلی</h4>
+                            <div class="form-row">
+                                <div class="form-group"><label for="waterproof">مقاوم به آب</label><select name="waterproof" id="waterproof"><option value="">انتخاب کنید</option><option value="water_resistant">مقاوم به آب</option><option value="waterproof">100%ضدآب</option><option value="no">خیر</option></select></div>
+                                <div class="form-group"><label for="metal_frame_installed">چهارچوب فلزی نصب شده</label><select name="metal_frame_installed" id="metal_frame_installed"><option value="">انتخاب کنید</option><option value="yes">بله</option><option value="no">خیر</option></select></div>
+                                <div class="form-group"><label for="usage_space">فضای مورد استفاده</label><select name="usage_space" id="usage_space"><option value="">انتخاب کنید</option><option value="room">اتاق</option><option value="wc">سرویس بهداشتی</option><option value="bathroom">حمام</option><option value="pool">استخر</option><option value="management">اتاق مدیریت</option><option value="conference">کنفرانس</option></select></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="interior_style">سبک داخلی</label><select name="interior_style" id="interior_style"><option value="">انتخاب کنید</option><option value="modern">مدرن</option><option value="neo_classic">نئو کلاسیک</option><option value="classic">کلاسیک</option></select></div>
+                                <div class="form-group"><label for="color_theme">تم رنگ</label><select name="color_theme" id="color_theme"><option value="">انتخاب کنید</option><option value="colored">رنگی</option><option value="black_theme">تم سیاه</option><option value="light_theme">تم روشن</option></select></div>
+                                <div class="form-group"><label for="weatherstrip">نوار درزگیر</label><select name="weatherstrip" id="weatherstrip"><option value="">انتخاب کنید</option><option value="yes">دارد</option><option value="no">ندارد</option></select></div>
+                                <div class="form-group"><label for="interior_material">جنس درب داخلی</label><select name="interior_material" id="interior_material"><option value="">انتخاب کنید</option><option value="mdf_melamine">MDF و ملامینه</option><option value="abs">ABS</option><option value="polywood">پلی وود</option></select></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1083,4 +969,3 @@ function mattress_advisor_settings_page() {
     </div>
     <?php
 }
-
